@@ -1,0 +1,81 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+df = pd.read_csv("names_year.csv")
+
+
+
+####This is question 1
+# Load your local wide-format CSV file
+df = pd.read_csv("names_year.csv")  # Replace with your actual filename
+
+# Filter for the name 'John'
+john = df[df["name"] == "John"]
+
+# Plot lines
+plt.figure(figsize=(12, 6))
+plt.plot(john["year"], john["UT"], label="Utah", color="red")
+plt.plot(john["year"], john["OR"], label="Oregon", color="orange")
+
+# Titles and labels
+plt.title("The history of John for Utah (red) and Oregon (orange)", fontweight='bold')
+plt.xlabel("Year name given")
+plt.ylabel("Count of John")
+
+# Add annotation lines
+for year in [1936, 1976, 1999]:
+    plt.axvline(x=year, color='black', linewidth=1)
+    plt.text(year + 1, john[["UT", "OR"]].max().max() * 0.95, str(year), verticalalignment='top')
+
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Load the file (assuming it's actually a CSV with a .py extension)
+df = pd.read_csv("planes.py", na_values=["", " ", "NA", "N/A", "na", "n/a", "--", "-", "?"])
+
+# Replace any other potential placeholders with NaN
+df.replace(["", " ", "NA", "N/A", "na", "n/a", "--", "-", "?"], np.nan, inplace=True)
+
+# Find one row with at least one NaN
+example_row = df[df.isna().any(axis=1)].iloc[0]
+
+# Convert to raw JSON format
+json_result = example_row.to_json(orient="index")
+print(json_result)
+
+
+
+
+
+###This is question 3
+
+# Load the data
+df = pd.read_csv('housing_data.csv')
+
+# Filter for 1 and 2 story houses only
+df_filtered = df[df['Number_of_Stories'].isin([1, 2])]
+
+# Group garage capacities of 4 or more into "4 or less"
+df_filtered['Garage_Capacity_Grouped'] = df_filtered['Garage_Capacity'].apply(lambda x: x if x <= 4 else 4)
+
+# Create the pivot table
+pivot_table = pd.pivot_table(
+    df_filtered,
+    values='House_ID',  # Assuming each house has a unique ID
+    index='Number_of_Stories',
+    columns='Garage_Capacity_Grouped',
+    aggfunc='count',
+    fill_value=0
+)
+
+# Display the pivot table
+print(pivot_table)
+
+# Plot the pivot table as a bar chart
+pivot_table.plot(kind='bar', stacked=True)
+plt.title('Building Counts by Stories and Garage Capacity')
+plt.xlabel('Number of Stories')
+plt.ylabel('Number of Houses')
+plt.legend(title='Garage Capacity')
+plt.tight_layout()
+plt.show()
